@@ -5,11 +5,15 @@ Signal::Signal(std::string filename, std::string cache_root)
 {
 	try
 	{
+		debug("Signal::Signal(): begin",1);
+		debug("Signal::Signal(): filename is [" + filename + "], cache_root is [" + cache_root + "]",2);
+
 		fileCache = new Cache(cache_root, filename);
 		wigPeaks = new unordered_map<string,PeakInfo>;
 
 		if(!fileCache->get_data(wigPeaks))	
 			throw runtime_error("Could not get data from filecache!");
+		debug("Signal::Signal(): end",1);
 	}
 	catch (const runtime_error &e)
 	{
@@ -19,6 +23,7 @@ Signal::Signal(std::string filename, std::string cache_root)
 
 std::vector<Peak> * Signal::getOverlapPeaks(std::string chr, Peak bed_peak)
 {
+	debug("Signal::getOverlapPeaks(): begin",1);
 	unsigned int peaks_end = (*wigPeaks)[chr].numPeaks;
 	unsigned int start = bsearch(chr, bed_peak.start);
 	unsigned int end = bsearch(chr, bed_peak.end);
@@ -32,11 +37,15 @@ std::vector<Peak> * Signal::getOverlapPeaks(std::string chr, Peak bed_peak)
 	if ((*wigPeaks)[chr].peaks[end].end < bed_peak.start)
 		return new vector<Peak>(0);
 
-	vector<Peak> * result = new vector<Peak>(end - start);
+	vector<Peak> * result = new vector<Peak>;
 
 	for (unsigned int i = start; i <= end; i++)
-		result->push_back((*wigPeaks)[chr].peaks[i]);
+	{
+		if ((*wigPeaks)[chr].peaks[i].start < bed_peak.end && (*wigPeaks)[chr].peaks[i].end > bed_peak.start)
+			result->push_back((*wigPeaks)[chr].peaks[i]);
+	}
 
+	debug("Signal::getOverlapPeaks(): end successful",1);
 	return result;
 /*
 	vector<Peak>::iterator start = bsearch(chr, bed_peak.start);

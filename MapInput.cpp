@@ -18,7 +18,8 @@ void parse_opts(int argc, char * argv[], std::string & cache_root, std::string &
 			{
 				case 1:
 					debug("free arg: [" + string(optarg) + "]", 1);
-					bedfiles.push_back(string(optarg));				
+					bedfiles.push_back(string(optarg));			
+					break;	
 				case 'i':
 					filename = optarg;
 					has_i = true;	

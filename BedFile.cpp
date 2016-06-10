@@ -5,6 +5,7 @@ BedFile::BedFile(std::string filename)
 {
 	try
 	{
+		debug("BedFile::BedFile(): begin",1);
 		ifstream test(filename.c_str());
 	
 		if (!test.is_open())
@@ -12,6 +13,8 @@ BedFile::BedFile(std::string filename)
 	
 		test.close();
 		infile = filename;
+		outfile = filename + ".mapwig";
+		debug("BedFile::BedFile(): end",1);
 	}
 	catch (const runtime_error &e)
 	{
@@ -23,6 +26,7 @@ void BedFile::parse(void)
 {
 	try
 	{
+		debug("BedFile::parse(): begin",1);
 		ifstream file(infile);
 		
 		string line;
@@ -51,6 +55,7 @@ void BedFile::parse(void)
 		}
 
 		sort_peaks();
+		debug("BedFile::parse(): end",1);
 
 	}
 	catch(const runtime_error &e)
@@ -61,37 +66,64 @@ void BedFile::parse(void)
 
 void BedFile::map(Signal ** wig)
 {
+	debug("BedFile::map(): begin",1);
 	for (auto chrIter = peaks.begin(); chrIter != peaks.end(); chrIter++)
 	{
+		debug("BedFile::map()::On chr [" + chrIter->first + "]",2);
 		if (!(*wig)->checkChr(chrIter->first))
 			continue;
 
-		for (auto peakIter = peaks[chrIter->first].begin(); peakIter != peaks[chrIter->first].end(); chrIter++)
+		for (auto peakIter = peaks[chrIter->first].begin(); peakIter != peaks[chrIter->first].end(); peakIter++)
 		{
-			vector<Peak> * wigOverlap = new vector<Peak>();
+			debug("BedFile::map()::begin of Bed peak loop",2);
+			vector<Peak> * wigOverlap = new vector<Peak>;
 			wigOverlap = (*wig)->getOverlapPeaks(chrIter->first, *peakIter);
+
+			debug("BedFile::map(): wigOverlap size is [" + conv((int) wigOverlap->size())+ "]", 2);
+			debug("BedFile::map(): before for loop",2);
 			for (auto wigIter = wigOverlap->begin(); wigIter != wigOverlap->end(); wigIter++)
 			{
-				unsigned int start = wigIter->start;	
-				unsigned int end = wigIter->end;
+				debug("BedFile::map(): On wig peak [" + conv((int) (wigIter - wigOverlap->begin())) + "] out of [" + conv( (int) (wigOverlap->end() - wigOverlap->begin())) + "]", 2);
+//				unsigned int start = wigIter->start;	
+//				unsigned int end = wigIter->end;
 
-				if (start < peakIter->start)
-					start = peakIter->start;
-				
-				if (end > peakIter->end)
-					end = peakIter->end;
+				unsigned int start = 0, end = 0;
 
-				peakIter->value += wigIter->value * (end - start);
+				if (wigIter->start < peakIter->end && wigIter->end > peakIter->start)
+				{
+
+					if (wigIter->start < peakIter->start)
+						start = peakIter->start;
+					else
+						start = wigIter->start;
+					
+					if (wigIter->end > peakIter->end)
+						end = peakIter->end;
+					else
+						end = wigIter->end;
+	
+					peakIter->value += wigIter->value * (end - start);
+				}
+				else
+				{
+					cerr << "Peak does not overlap!" << endl;
+				}
+				debug("BedFile::map(): End of wig peak loop",2);
 			}
+			debug("BedFile::map(): after for loop",2);
 			delete wigOverlap;
+			debug("BedFile::map(): after delete",3);
 		}	
+		debug("BedFile::map(): end of chr [" + chrIter->first + "]",2);
 	}
+	debug("BedFile::map(): end",1);
 }
 
 void BedFile::output(void)
 {
 	try
 	{
+		debug("BedFile::out(): begin",1);
 		ofstream file(outfile);
 
 		if (!file.is_open())
@@ -101,11 +133,17 @@ void BedFile::output(void)
 		{
 			for (unsigned int i = 0; i < peaks[*chrIter].size(); i++)
 			{
-				file << *chrIter << "\t" << peaks[*chrIter][i].start << "\t" << peaks[*chrIter][i].end << "\t" << peaks[*chrIter][i].value << "\t" << other_cols[*chrIter][i] << endl;
+				char valstr[50];
+				double val = (peaks[*chrIter][i].value / (peaks[*chrIter][i].end - peaks[*chrIter][i].start) );
+
+				sprintf(valstr, "%.4f", val);
+
+				file << *chrIter << "\t" << peaks[*chrIter][i].start << "\t" << peaks[*chrIter][i].end << "\t" << valstr << endl;
 			}
 		}	
 
 		file.close();
+		debug("BedFile::out(): end",1);
 	}
 	catch (const runtime_error &e)
 	{
@@ -120,6 +158,7 @@ bool peakCmp(Peak peak1, Peak peak2)
 
 void BedFile::sort_peaks(void)
 {
+	debug("BedFile::sort_peaks(): begin",1);
 	for (auto iter = peaks.begin(); iter != peaks.end(); iter++)
 	{
 		sortedChroms.push_back(iter->first);
@@ -127,4 +166,5 @@ void BedFile::sort_peaks(void)
 	}
 	
 	sort(sortedChroms.begin(), sortedChroms.end());
+	debug("BedFile::sort_peaks(): end",1);
 }
