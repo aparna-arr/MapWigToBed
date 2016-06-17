@@ -91,7 +91,6 @@ void BedFile::map(Signal ** wig)
 
 				if (wigIter->start < peakIter->end && wigIter->end > peakIter->start)
 				{
-
 					if (wigIter->start < peakIter->start)
 						start = peakIter->start;
 					else
@@ -159,6 +158,7 @@ bool peakCmp(Peak peak1, Peak peak2)
 void BedFile::sort_peaks(void)
 {
 	debug("BedFile::sort_peaks(): begin",1);
+
 	for (auto iter = peaks.begin(); iter != peaks.end(); iter++)
 	{
 		sortedChroms.push_back(iter->first);
