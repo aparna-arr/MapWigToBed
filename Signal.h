@@ -17,7 +17,7 @@ class Signal
 	unsigned int bsearch(std::string chr, unsigned int pos);
 	
 	Cache * fileCache;
-	std::unordered_map<std::string, PeakInfo> * wigPeaks;
+	std::unordered_map<std::string, std::vector<Peak>> * wigPeaks;
 };
 
 #endif

@@ -79,11 +79,11 @@ void BedFile::map(Signal ** wig)
 			vector<Peak> * wigOverlap = new vector<Peak>;
 			wigOverlap = (*wig)->getOverlapPeaks(chrIter->first, *peakIter);
 
-			debug("BedFile::map(): wigOverlap size is [" + conv((int) wigOverlap->size())+ "]", 2);
+		//	debug("BedFile::map(): wigOverlap size is [" + conv((int) wigOverlap->size())+ "]", 2);
 			debug("BedFile::map(): before for loop",2);
 			for (auto wigIter = wigOverlap->begin(); wigIter != wigOverlap->end(); wigIter++)
 			{
-				debug("BedFile::map(): On wig peak [" + conv((int) (wigIter - wigOverlap->begin())) + "] out of [" + conv( (int) (wigOverlap->end() - wigOverlap->begin())) + "]", 2);
+//				debug("BedFile::map(): On wig peak [" + conv((int) (wigIter - wigOverlap->begin())) + "] out of [" + conv( (int) (wigOverlap->end() - wigOverlap->begin())) + "]", 2);
 //				unsigned int start = wigIter->start;	
 //				unsigned int end = wigIter->end;
 

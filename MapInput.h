@@ -3,7 +3,7 @@
 
 #include"../Cache/Utils.h"
 
-void usage(void);
+void usageMap(void);
 void parse_opts(int argc, char * argv[], std::string & cache_root, std::string & filename, std::vector<std::string> & bedfiles);
 
 #endif

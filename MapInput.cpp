@@ -1,7 +1,7 @@
 #include"MapInput.h"
 using namespace std;
 
-void usage(void)
+void usageMap(void)
 {
 	cout << "usage: mapwigtobed [-d <DEBUG_LEVEL 0..3>] -c <CACHE ROOT PATH> -i <WIGFILE> <BEDFILES>" << endl;
 }
@@ -30,11 +30,13 @@ void parse_opts(int argc, char * argv[], std::string & cache_root, std::string &
 					break;
 				case 'd':
 				{
-					int debugOpt;	
+//					int *debugOpt = 0;	
 
-					if (!toInt(optarg, debugOpt))
-						throw invalid_argument("-d requires an INT argument!");	
-			
+//					if (!toInt(optarg, &debugOpt))
+//						throw invalid_argument("-d requires an INT argument!");	
+//					
+//					cerr << optarg << " " << *debugOpt << endl;	
+					int debugOpt = toInt(optarg);
 					DebugLevel(debugOpt);
 				}
 					break;
@@ -50,7 +52,8 @@ void parse_opts(int argc, char * argv[], std::string & cache_root, std::string &
 		
 					break;
 				default:
-					throw invalid_argument ("Something went wrong: default switch case on optopt [" + conv(optopt) + "]");	
+					throw invalid_argument ("Something went wrong: default switch case on optopt ");	
+			//		throw invalid_argument ("Something went wrong: default switch case on optopt [" + conv(optopt) + "]");	
 			}
 
 		if(!has_i && !has_c)
@@ -66,7 +69,7 @@ void parse_opts(int argc, char * argv[], std::string & cache_root, std::string &
 	catch (const invalid_argument &e)
 	{
 		cerr << "INVALID_ARGUMENT_ERROR: " << e.what() << endl << endl;
-		usage();
+		usageMap();
 		throw;
 	}
 }
