@@ -1,7 +1,7 @@
 #include"BedFile.h"
 using namespace std;
 
-BedFile::BedFile(std::string filename)
+BedFile::BedFile(std::string filename, std::string wigfilename)
 {
 	try
 	{
@@ -13,7 +13,32 @@ BedFile::BedFile(std::string filename)
 	
 		test.close();
 		infile = filename;
-		outfile = filename + ".mapwig";
+
+		int wigname_start = wigfilename.rfind("/") + 1;
+
+		if (wigname_start < 0 || (unsigned) wigname_start == string::npos) 
+			wigname_start = 0;
+
+		int wigname_end = wigfilename.find(".wig");
+
+		debug("wigfilename is [" + wigfilename + "] start is " + conv(wigname_start) + " end is " + conv(wigname_end),2);
+
+		string wigname = wigfilename.substr(wigname_start, wigname_end - wigname_start);
+
+		int bedname_start = filename.rfind("/") + 1;
+
+		if (bedname_start < 0 || (unsigned) bedname_start == string::npos) 
+			bedname_start = 0;
+
+		int bedname_end = filename.find(".bed");
+		debug("bedfilename is [" + filename + "] start is " + conv(bedname_start) + " end is " + conv(bedname_end),2);
+		string bedname = filename.substr(bedname_start, bedname_end - bedname_start);
+		
+		
+		outfile = wigname + "_" + bedname + ".mapwig";
+		
+		debug("outfile is [" + outfile + "]", 2);
+	
 		debug("BedFile::BedFile(): end",1);
 	}
 	catch (const runtime_error &e)

@@ -8,7 +8,7 @@
 class BedFile
 {
 	public:
-	BedFile(std::string filename);
+	BedFile(std::string filename, std::string wigfilename);
 	
 	void parse(void);
 	void map(Signal ** wig); // pass address of Signal * object

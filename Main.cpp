@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
 
 		for (auto iter = beds.begin(); iter != beds.end(); iter++)
 		{
-			BedFile * myBed = new BedFile(*iter);
+			BedFile * myBed = new BedFile(*iter, filename);
 			myBed->parse();
 			myBed->map(&myWig);
 			myBed->output();
